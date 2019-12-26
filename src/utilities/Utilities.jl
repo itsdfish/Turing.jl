@@ -15,7 +15,8 @@ export  vectorize,
         vectorize,
         set_resume!,
         namedtuple,
-        ntmerge
+        ntmerge,
+        FlattenIterator
 
 include("helper.jl")
 include("robustinit.jl")
