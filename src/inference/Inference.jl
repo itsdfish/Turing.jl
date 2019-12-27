@@ -258,12 +258,12 @@ end
 # Chain making utilities #
 ##########################
 
-function _params_to_array(ts::Vector{T}, spl::Sampler) where {T<:AbstractTransition}
+function _params_to_array(ts::Vector{<:AbstractTransition}, spl::Sampler)
     names_set = Set{String}()
     # Extract the parameter names and values from each transition.
-    dicts = map(enumerate(ts)) do (i, t)
+    dicts = map(ts) do t
         nms, vs = flatten_namedtuple(t.θ)
-        foreach(nms) do nm
+        for nm in nms
             push!(names_set, nm)
         end
         # Convert the names and values to a single dictionary.
@@ -276,8 +276,8 @@ function _params_to_array(ts::Vector{T}, spl::Sampler) where {T<:AbstractTransit
     return names, vals
 end
 
-function flatten_namedtuple(nt::NamedTuple{pnames}) where {pnames}
-    temp = map(keys(nt)) do k
+function flatten_namedtuple(nt::NamedTuple)
+    names_vals = mapreduce(vcat, keys(nt)) do k
         v = nt[k]
         if length(v) == 1
             return [(string(k), v)]
@@ -287,7 +287,6 @@ function flatten_namedtuple(nt::NamedTuple{pnames}) where {pnames}
             end
         end
     end
-    names_vals = vcat(temp...)
     return [vn[1] for vn in names_vals], [vn[2] for vn in names_vals]
 end
 
